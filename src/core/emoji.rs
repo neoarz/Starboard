@@ -17,8 +17,8 @@ use crate::client::bot::StarboardBot;
 
 /// Get rid of the Variation-Selector-16 codepoint that is sometimes present in user
 /// input. https://emojipedia.org/variation-selector-16/
-pub fn remove_v16(target: &str) -> String {
-    target.replace('\u{fe0f}', "")
+pub fn remove_v16(target: &str) -> &str {
+    target.strip_suffix('\u{fe0f}').unwrap_or(target)
 }
 
 pub fn qualify_emoji(target: &str) -> &str {
@@ -32,7 +32,6 @@ pub fn compare_unicode_emojis(left: &str, right: &str) -> bool {
 #[derive(Clone)]
 pub struct SimpleEmoji {
     raw: String,
-    v16_stripped: String,
     as_id: Option<Id<EmojiMarker>>,
 }
 
@@ -50,11 +49,7 @@ impl PartialEq<String> for SimpleEmoji {
 
 impl SimpleEmoji {
     fn new(raw: String, as_id: Option<Id<EmojiMarker>>) -> Self {
-        Self {
-            v16_stripped: remove_v16(&raw),
-            raw,
-            as_id,
-        }
+        Self { raw, as_id }
     }
 
     pub fn from_user_input(
@@ -114,7 +109,7 @@ impl SimpleEmoji {
             }
         } else {
             RequestReactionType::Unicode {
-                name: &self.v16_stripped,
+                name: remove_v16(qualify_emoji(&self.raw)),
             }
         }
     }
