@@ -3,8 +3,6 @@ name = "starboard"
 version = "0.1.0"
 edition = "2024"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
 twilight-gateway = "0.17.1"
 twilight-http = "0.17.1"
@@ -14,7 +12,7 @@ twilight-util = { version = "0.17.0", features = ["builder", "snowflake"] }
 twilight-mention = "0.17.0"
 twilight-standby = "0.17.0"
 
-twilight-interactions = { version = "0.17.0", git = "https://github.com/ghostlylake/twilight-interactions", branch = "twilight-0.17" }
+twilight-interactions = "0.17.0"
 
 async-trait = "0.1.89"
 tokio = { version = "1.48.0", features = ["full"] }
