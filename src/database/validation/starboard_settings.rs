@@ -4,7 +4,7 @@
 
 use std::collections::HashSet;
 
-use crate::constants;
+use crate::{constants, core::emoji::qualify_emoji};
 
 pub fn none_or_number(val: String) -> Result<Option<i16>, String> {
     if val == "none" {
@@ -109,8 +109,8 @@ pub fn validate_vote_emojis(
     downvote: &[String],
     premium: bool,
 ) -> Result<(), String> {
-    let unique_upvote: HashSet<_> = upvote.iter().collect();
-    let unique_downvote: HashSet<_> = downvote.iter().collect();
+    let unique_upvote: HashSet<_> = upvote.iter().map(|e| qualify_emoji(e)).collect();
+    let unique_downvote: HashSet<_> = downvote.iter().map(|e| qualify_emoji(e)).collect();
 
     if unique_upvote
         .intersection(&unique_downvote)

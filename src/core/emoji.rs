@@ -11,104 +11,84 @@ use twilight_model::{
         marker::{EmojiMarker, GuildMarker},
     },
 };
+use unicode_segmentation::UnicodeSegmentation;
 
 use crate::client::bot::StarboardBot;
 
 /// Get rid of the Variation-Selector-16 codepoint that is sometimes present in user
 /// input. https://emojipedia.org/variation-selector-16/
-pub fn clean_emoji(unicode: &str) -> &str {
-    unicode.strip_suffix('\u{fe0f}').unwrap_or(unicode)
+pub fn remove_v16(target: &str) -> String {
+    target.replace('\u{fe0f}', "")
+}
+
+pub fn qualify_emoji(target: &str) -> &str {
+    emojis::get(target).map(|e| e.as_str()).unwrap_or(target)
+}
+
+pub fn compare_unicode_emojis(left: &str, right: &str) -> bool {
+    qualify_emoji(left) == qualify_emoji(right)
 }
 
 #[derive(Clone)]
 pub struct SimpleEmoji {
     raw: String,
+    v16_stripped: String,
     as_id: Option<Id<EmojiMarker>>,
 }
 
 impl PartialEq for SimpleEmoji {
     fn eq(&self, other: &Self) -> bool {
-        clean_emoji(&other.raw) == clean_emoji(&self.raw)
+        compare_unicode_emojis(&self.raw, &other.raw)
     }
 }
 
 impl PartialEq<String> for SimpleEmoji {
     fn eq(&self, other: &String) -> bool {
-        clean_emoji(&self.raw) == clean_emoji(other)
+        compare_unicode_emojis(&self.raw, other)
     }
 }
 
 impl SimpleEmoji {
+    fn new(raw: String, as_id: Option<Id<EmojiMarker>>) -> Self {
+        Self {
+            v16_stripped: remove_v16(&raw),
+            raw,
+            as_id,
+        }
+    }
+
     pub fn from_user_input(
-        input: &str,
+        mut input: &str,
         bot: &StarboardBot,
         guild_id: Id<GuildMarker>,
     ) -> Vec<Self> {
         lazy_static! {
-            static ref RE: Regex = Regex::new(concat!(
-                r"(<a?:\w+:(?P<emoji_id>\d+)>",
-                r"|(?P<flag>[\u{1f1e6}-\u{1f1ff}]{2,})",
-                r"|(?P<unicode>.(\u{fe0f}?\u{200d}.)*\u{fe0f}?))",
-            ))
-            .unwrap();
-        };
+            static ref CUSTOM: Regex = Regex::new(r"^\d{10,}").unwrap();
+        }
 
         let mut emojis = Vec::new();
-        for caps in RE.captures_iter(input) {
-            if let Some(emoji_id) = caps.name("emoji_id") {
-                let id: Id<EmojiMarker> = emoji_id.as_str().parse().unwrap();
+
+        while !input.is_empty() {
+            if let Some(m) = CUSTOM.find(input) {
+                input = &input[m.end()..];
+
+                let Ok(id) = m.as_str().parse() else {
+                    continue;
+                };
                 if !bot.cache.guild_emoji_exists(guild_id, id) {
                     continue;
                 }
+                emojis.push(SimpleEmoji::new(id.to_string(), Some(id)));
+            } else if let Some(cluster) = input.graphemes(true).next() {
+                input = &input[cluster.len()..];
 
-                emojis.push(Self {
-                    raw: emoji_id.as_str().to_owned(),
-                    as_id: Some(id),
-                });
-            } else if let Some(emoji) = caps.name("unicode") {
-                if emojis::get(emoji.as_str()).is_some() {
-                    emojis.push(Self {
-                        raw: emoji.as_str().to_owned(),
-                        as_id: None,
-                    });
-                }
-            } else if let Some(flag) = caps.name("flag") {
-                // a flag is two consecutive regional indicators. The good news is that
-                // regional indicators are single codepoints which makes it easy to iterate
-                let mut letters = flag.as_str().chars();
-                // safety: the regex only matches for 2 or more consecutive regional indicators
-                let mut previous = letters.next().unwrap();
+                let Some(emoji) = emojis::get(cluster) else {
+                    continue;
+                };
 
-                loop {
-                    let Some(letter) = letters.next() else {
-                        emojis.push(Self {
-                            raw: previous.into(),
-                            as_id: None,
-                        });
-                        break;
-                    };
-
-                    let flag = String::from_iter([previous, letter]);
-
-                    if emojis::get(&flag).is_some() {
-                        emojis.push(Self {
-                            raw: flag,
-                            as_id: None,
-                        });
-
-                        if let Some(next) = letters.next() {
-                            previous = next;
-                        } else {
-                            break;
-                        }
-                    } else {
-                        emojis.push(Self {
-                            raw: previous.into(),
-                            as_id: None,
-                        });
-                        previous = letter;
-                    }
-                }
+                emojis.push(SimpleEmoji::new(emoji.to_string(), None));
+            } else {
+                break;
             }
         }
 
@@ -133,7 +113,9 @@ impl SimpleEmoji {
                 id: emoji_id,
             }
         } else {
-            RequestReactionType::Unicode { name: &self.raw }
+            RequestReactionType::Unicode {
+                name: &self.v16_stripped,
+            }
         }
     }
 }
@@ -150,17 +132,14 @@ impl EmojiCommon for SimpleEmoji {
                 Some(false) => emoji_id.mention().to_string(),
             }
         } else {
-            self.raw
+            qualify_emoji(&self.raw).to_string()
         }
     }
 
     fn from_stored(raw: Self::Stored) -> Self {
-        let as_id = match Id::<EmojiMarker>::from_str(&raw) {
-            Ok(value) => Some(value),
-            Err(_) => None,
-        };
+        let as_id = Id::<EmojiMarker>::from_str(&raw).ok();
 
-        Self { raw, as_id }
+        Self::new(raw, as_id)
     }
 
     fn into_stored(self) -> Self::Stored {
@@ -204,14 +183,8 @@ impl EmojiCommon for Vec<SimpleEmoji> {
 impl From<EmojiReactionType> for SimpleEmoji {
     fn from(reaction: EmojiReactionType) -> Self {
         match reaction {
-            EmojiReactionType::Custom { id, .. } => SimpleEmoji {
-                raw: id.to_string(),
-                as_id: Some(id),
-            },
-            EmojiReactionType::Unicode { name } => SimpleEmoji {
-                raw: name,
-                as_id: None,
-            },
+            EmojiReactionType::Custom { id, .. } => SimpleEmoji::new(id.to_string(), Some(id)),
+            EmojiReactionType::Unicode { name } => SimpleEmoji::new(name, None),
         }
     }
 }
