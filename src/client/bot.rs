@@ -17,7 +17,6 @@ use crate::{
     cache::Cache,
     client::config::Config,
     errors::{StarboardError, StarboardResult},
-    utils::into_id::IntoId,
 };
 
 use super::{cooldowns::Cooldowns, locks::Locks};
@@ -120,8 +119,6 @@ impl StarboardBot {
     }
 
     pub async fn handle_error(&self, err: &StarboardError) {
-        sentry::capture_error(err);
-
         let msg = format!("{err:#?}").trim().to_string();
         let msg = if msg.is_empty() {
             "Some Error".to_string()
@@ -131,14 +128,16 @@ impl StarboardBot {
 
         eprintln!("{msg}");
 
-        let attachment = Attachment::from_bytes("erorr.rs".into(), msg.bytes().collect(), 1);
+        let attachment = Attachment::from_bytes("error.txt".into(), msg.bytes().collect(), 1);
         let attachments = &[attachment];
 
-        if let Some(chid) = self.config.error_channel {
+        if let Some(webhook) = &self.config.error_webhook {
             let ret = self
                 .http
-                .create_message(chid.into_id())
+                .execute_webhook(webhook.id, &webhook.token)
+                .content("Starboard error")
                 .attachments(attachments)
+                .wait()
                 .await;
 
             if let Err(why) = ret {
