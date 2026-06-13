@@ -51,11 +51,7 @@ impl CreateStarboard {
         };
         if count >= limit {
             ctx.respond_str(
-                &format!(
-                    "You can only have up to {} starboards. The premium limit is {}.",
-                    limit,
-                    constants::MAX_PREM_STARBOARDS,
-                ),
+                &format!("You can only have up to {} starboards.", limit,),
                 true,
             )
             .await?;

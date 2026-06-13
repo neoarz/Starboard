@@ -130,12 +130,8 @@ pub fn validate_vote_emojis(
 
     if unique_upvote.len() + unique_downvote.len() > limit {
         return Err(format!(
-            concat!(
-                "You cannot have more than {} upvote and downvote emojis per starbard. ",
-                "The premium limit is {}.",
-            ),
+            "You cannot have more than {} upvote and downvote emojis per starbard.",
             limit,
-            constants::MAX_PREM_VOTE_EMOJIS,
         ));
     }
 

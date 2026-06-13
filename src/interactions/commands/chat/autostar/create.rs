@@ -53,11 +53,7 @@ impl CreateAutoStarChannel {
         };
         if count >= limit {
             ctx.respond_str(
-                &format!(
-                    "You can only have up to {} autostar channels. The premium limit is {}.",
-                    limit,
-                    constants::MAX_PREM_AUTOSTAR,
-                ),
+                &format!("You can only have up to {} autostar channels.", limit,),
                 true,
             )
             .await?;

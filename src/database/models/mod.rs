@@ -6,7 +6,6 @@ pub mod filter_group;
 pub mod guild;
 pub mod member;
 pub mod message;
-pub mod patron;
 pub mod permrole;
 pub mod permrole_starboard;
 pub mod posrole;

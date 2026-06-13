@@ -62,11 +62,7 @@ impl ViewAutoStarChannels {
             if self.name.as_ref() == Some(&a.name) {
                 current = idx;
             }
-            let mut label = a.name.clone();
-            if a.premium_locked {
-                label.push_str(" (premium-locked)");
-            }
-
+            let label = a.name.clone();
             let emb = autostar_embed(&bot, guild_id, a).await?;
 
             let page = SelectPaginatorPageBuilder::new(label).add_embed(emb);
@@ -115,17 +111,7 @@ async fn autostar_embed(
         .map(|v| v.to_string())
         .unwrap_or_else(|| "none".to_string());
 
-    let note = if asc.premium_locked {
-        concat!(
-            "This autostar channel is locked because it exceeds the non-premium ",
-            "limit.\n\n"
-        )
-    } else {
-        ""
-    };
-
     let asc_settings = concat_format!(
-        "{}" <- note;
         "This autostar channel is in <#{}>.\n\n" <- asc.channel_id;
         "emojis: {}\n" <- emojis;
         "min-chars: {}\n" <- asc.min_chars;

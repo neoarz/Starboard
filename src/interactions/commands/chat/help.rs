@@ -29,7 +29,6 @@ fn buttons() -> Vec<Component> {
         link_btn("Support", constants::SUPPORT_URL),
         link_btn("Documentation", constants::DOCS_URL),
         link_btn("Source", constants::SOURCE_URL),
-        link_btn("Premium", constants::PATREON_URL),
     ];
 
     let row = Component::ActionRow(ActionRow {
@@ -60,12 +59,14 @@ impl Help {
             .field(EmbedFieldBuilder::new(
                 "Starboard's Features",
                 concat!(
-                    "Starboard's key free features are:\n",
+                    "Starboard's key features are:\n",
                     "- Multiple starboards\n",
                     "- Custom avatar/username for starboards (via webhooks)\n",
                     "- Autostar channels\n",
                     "- Complete per-channel starboard configuration\n",
-                    "- Limited per-role starboard configuration\n",
+                    "- Per-role starboard configuration\n",
+                    "- Regex-based matching\n",
+                    "- XP and position-based award roles\n",
                 ),
             ))
             .field(EmbedFieldBuilder::new(
@@ -74,19 +75,7 @@ impl Help {
                     "If you like Starboard and want to support it, you can do ";
                     "so by [voting]({}) or " <- constants::VOTE_URL;
                     "[leaving a review]({}) " <- constants::REVIEW_URL;
-                    "on Top.GG.\n\nIf you really want, you can also get Starboard Premium ";
-                    "by [becoming a patron]({})." <- constants::PATREON_URL;
-                ),
-            ))
-            .field(EmbedFieldBuilder::new(
-                "Starboard Premium",
-                concat_format!(
-                    "Premium works using a credit-based system. Each USD that you spend is ";
-                    "equivalent to 1 premium credit. Once you have 3 credits, you can redeem it ";
-                    "for 1 month of premium in any server.\n\n";
-                    "Use `/premium credits` to see your credits, and `/premium redeem` to redeem ";
-                    "premium in a server.\n\n";
-                    "To get premium, visit [patreon.com]({})." <- constants::PATREON_URL;
+                    "on Top.GG.";
                 ),
             ))
             .build();

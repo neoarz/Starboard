@@ -16,7 +16,6 @@ pub const CREDITS_PER_MONTH: u64 = 3;
 pub const INVITE_URL: &str = "https://discord.com/api/oauth2/authorize?client_id=700796664276844612&permissions=805661760&scope=bot%20applications.commands";
 pub const SUPPORT_URL: &str = "https://discord.gg/3gK8mSA";
 pub const SOURCE_URL: &str = "https://github.com/CircuitSacul/Starboard-4";
-pub const PATREON_URL: &str = "https://patreon.com/CircuitSacul";
 pub const VOTE_URL: &str = "https://top.gg/bot/700796664276844612/vote";
 pub const REVIEW_URL: &str = "https://top.gg/bot/700796664276844612#reviews";
 
@@ -27,8 +26,6 @@ pub const DOCS_FILTERS: &str = "https://docs.starboard.best/docs/filters";
 // Tasks
 pub const UPDATE_PRS_DELAY: Duration = Duration::from_secs(60 * 60);
 pub const CHECK_EXPIRED_PREMIUM: Duration = Duration::from_secs(60 * 60);
-pub const UPDATE_PATREON_DELAY: Duration = Duration::from_secs(60);
-pub const UPDATE_SUPPORTER_ROLES_DELAY: Duration = Duration::from_secs(60);
 
 // Cache size
 pub const MAX_MESSAGES: u64 = 50_000;

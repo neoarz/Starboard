@@ -94,7 +94,7 @@ impl RefreshMessage {
         let mut grouped = HashMap::new();
 
         for c in configs.iter() {
-            if !c.resolved.enabled || c.starboard.premium_locked {
+            if !c.resolved.enabled {
                 continue;
             }
 

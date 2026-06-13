@@ -49,12 +49,7 @@ impl ViewStarboard {
                 current = Some(idx);
             }
 
-            let mut label = sb.name.clone();
-            if sb.premium_locked {
-                label.push_str(" (premium-locked)");
-            }
-
-            let page = SelectPaginatorPageBuilder::new(label.clone())
+            let page = SelectPaginatorPageBuilder::new(sb.name.clone())
                 .add_embed(starboard_embed(&bot, guild_id, sb).await?);
             paginator = paginator.add_page(page);
         }
@@ -78,11 +73,6 @@ async fn starboard_embed(
     let pretty = format_settings(bot, guild_id, &config).await?;
 
     let mut desc = String::new();
-    if config.starboard.premium_locked {
-        desc.push_str(concat!(
-            "This starboard is locked because it exceeds the non-premium limit.\n\n"
-        ));
-    }
     write!(
         desc,
         "This starboard is in <#{}>.",

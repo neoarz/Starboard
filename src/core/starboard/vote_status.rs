@@ -70,7 +70,7 @@ impl<'a> VoteStatus<'a> {
 
         let eval_config = |config: &'a StarboardConfig| -> Option<(&'a StarboardConfig, VoteType)> {
             // skip disabled configurations
-            if !config.resolved.enabled || config.starboard.premium_locked {
+            if !config.resolved.enabled {
                 return None;
             }
 

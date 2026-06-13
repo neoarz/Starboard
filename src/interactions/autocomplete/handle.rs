@@ -7,7 +7,7 @@ use twilight_util::builder::InteractionResponseDataBuilder;
 use crate::{errors::StarboardResult, interactions::context::CommandCtx};
 
 use super::{
-    autoredeem::autoredeem_autocomplete, autostar_name::autostar_name_autocomplete,
+    autostar_name::autostar_name_autocomplete,
     exclusive_group_name::exclusive_group_name_autocomplete,
     filter_group::filter_group_name_autocomplete, override_name::override_name_autocomplete,
     starboard_name::starboard_name_autocomplete,
@@ -64,12 +64,6 @@ pub async fn handle_autocomplete(ctx: CommandCtx) -> StarboardResult<()> {
         "moststarred starboard" => starboard_name_autocomplete(&ctx, focused).await?,
         "utils force starboard" => starboard_name_autocomplete(&ctx, focused).await?,
         "utils unforce starboard" => starboard_name_autocomplete(&ctx, focused).await?,
-        // premium
-        "premium autoredeem disable server" => autoredeem_autocomplete(&ctx, focused).await?,
-        "premium-locks move-autostar from" => autostar_name_autocomplete(&ctx, focused).await?,
-        "premium-locks move-autostar to" => autostar_name_autocomplete(&ctx, focused).await?,
-        "premium-locks move-starboard from" => starboard_name_autocomplete(&ctx, focused).await?,
-        "premium-locks move-starboard to" => starboard_name_autocomplete(&ctx, focused).await?,
         // autostar channels
         "autostar delete name" => autostar_name_autocomplete(&ctx, focused).await?,
         "autostar view name" => autostar_name_autocomplete(&ctx, focused).await?,

@@ -2,7 +2,7 @@ use crate::constants;
 
 pub fn validate_regex(input: String, is_premium: bool) -> Result<Option<String>, String> {
     if !is_premium {
-        return Err("The `matches` and `not-matches` settings require premium.".to_string());
+        return Err("The `matches` and `not-matches` settings are unavailable.".to_string());
     }
 
     if input.len() > constants::MAX_REGEX_LENGTH as usize {

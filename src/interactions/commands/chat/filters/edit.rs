@@ -118,9 +118,9 @@ pub struct Edit {
     /// Require that the message be at most this many characters long. Use -1 to disable.
     #[command(rename = "max-length")]
     max_length: Option<i64>,
-    /// (Premium) Require that the message match this regex. Use `.*` to disable.
+    /// Require that the message match this regex. Use `.*` to disable.
     matches: Option<String>,
-    /// (Premium) Require that the message not match this regex. Use `.*` to disable.
+    /// Require that the message not match this regex. Use `.*` to disable.
     #[command(rename = "not-matches")]
     not_matches: Option<String>,
 
@@ -396,11 +396,8 @@ impl Edit {
                 filter.matches = None;
             } else {
                 if !premium {
-                    ctx.respond_str(
-                        "Only premium servers can use the `matches` condition.",
-                        true,
-                    )
-                    .await?;
+                    ctx.respond_str("The `matches` condition is unavailable.", true)
+                        .await?;
                     return Ok(());
                 }
 
@@ -424,11 +421,8 @@ impl Edit {
                 filter.not_matches = None;
             } else {
                 if !premium {
-                    ctx.respond_str(
-                        "Only premium servers can use the `not-matches` condition.",
-                        true,
-                    )
-                    .await?;
+                    ctx.respond_str("The `not-matches` condition is unavailable.", true)
+                        .await?;
                     return Ok(());
                 }
 

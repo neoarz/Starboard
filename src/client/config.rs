@@ -4,7 +4,6 @@ use url::Url;
 
 pub struct Config {
     pub token: String,
-    pub patreon_token: Option<String>,
     pub sentry: Option<String>,
     pub shards: u32,
     pub db_url: String,
@@ -13,10 +12,6 @@ pub struct Config {
     pub development: bool,
     pub owner_ids: Vec<u64>,
     pub bot_id: u64,
-    pub main_guild: Option<u64>,
-    pub patron_role: Option<u64>,
-    pub supporter_role: Option<u64>,
-    pub proxy: Option<String>,
 }
 
 impl Config {
@@ -59,16 +54,8 @@ impl Config {
             Err(why) => eprintln!("Failed to load .env: {why}"),
         };
         let token = Self::get_required_env("DISCORD_TOKEN");
-        let patreon_token = Self::get_optional_env("PATREON_TOKEN");
         let sentry = Self::get_optional_env("SENTRY_URL");
-        let shards = env::var("SHARDS")
-            .unwrap_or_else(|_| "1".to_string())
-            .parse()
-            .unwrap();
         let db_url = Self::database_url_from_env();
-        let db_connections = Self::get_optional_env("DB_MAX_DB_CONNECTIONS")
-            .map(|v| v.parse().unwrap())
-            .unwrap_or(10);
         let error_channel = Self::get_optional_id("ERROR_CHANNEL_ID");
         let development = env::var("DEVELOPMENT")
             .unwrap_or_else(|_| "false".to_string())
@@ -83,27 +70,16 @@ impl Config {
             .parse()
             .expect("Invalid BOT_ID");
 
-        let main_guild = Self::get_optional_id("MAIN_GUILD");
-        let patron_role = Self::get_optional_id("PATRON_ROLE");
-        let supporter_role = Self::get_optional_id("SUPPORTER_ROLE");
-
-        let proxy = Self::get_optional_env("PROXY");
-
         Config {
             token,
-            patreon_token,
             sentry,
-            shards,
+            shards: 1,
             db_url,
-            db_connections,
+            db_connections: 10,
             error_channel,
             development,
             owner_ids: owner_ids.unwrap_or_default(),
             bot_id,
-            main_guild,
-            patron_role,
-            supporter_role,
-            proxy,
         }
     }
 }

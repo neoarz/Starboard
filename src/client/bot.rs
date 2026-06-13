@@ -56,13 +56,10 @@ impl StarboardBot {
         let gw_config = GatewayConfig::new(config.token.clone(), intents);
 
         // Setup HTTP connection
-        let mut http = HttpClient::builder()
+        let http = HttpClient::builder()
             .token(config.token.clone())
-            .timeout(Duration::from_secs(30));
-        if let Some(proxy) = &config.proxy {
-            http = http.proxy(proxy.to_owned(), true);
-        }
-        let http = http.build();
+            .timeout(Duration::from_secs(30))
+            .build();
 
         // Setup database connection
         let pool = PgPoolOptions::new()
@@ -75,6 +72,13 @@ impl StarboardBot {
             .run(&pool)
             .await
             .expect("failed to run migrations");
+
+        sqlx::query("UPDATE starboards SET premium_locked=false")
+            .execute(&pool)
+            .await?;
+        sqlx::query("UPDATE autostar_channels SET premium_locked=false")
+            .execute(&pool)
+            .await?;
 
         // load autostar channels
         let asc: Vec<_> = sqlx::query!(

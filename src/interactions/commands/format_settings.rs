@@ -223,7 +223,7 @@ pub async fn format_settings(
         behavior,
         regex: format!(
             concat!(
-                "These settings are premium-only. You can input a simple phrase to match on, or you ",
+                "You can input a simple phrase to match on, or you ",
                 "can use regex for more advanced filtering. See [rustexp](https://rustexp.lpil.uk) ",
                 "for more info on regex.{}\n\nMessages **must** match:\n{}\n",
                 "Messages **must not** match:\n{}",

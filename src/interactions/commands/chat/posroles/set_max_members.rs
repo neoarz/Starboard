@@ -25,7 +25,7 @@ impl SetMaxMembers {
         let guild_id = get_guild_id!(ctx).get_i64();
 
         if !is_guild_premium(&ctx.bot, guild_id, true).await? {
-            ctx.respond_str("Only premium servers can use this command.", true)
+            ctx.respond_str("This command is unavailable.", true)
                 .await?;
             return Ok(());
         }

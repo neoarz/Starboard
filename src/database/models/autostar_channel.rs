@@ -153,9 +153,8 @@ impl AutoStarChannel {
 
         if val.len() > limit {
             return Err(format!(
-                "You can only have up to {} emojis per autostar channel. The premium limit is {}.",
+                "You can only have up to {} emojis per autostar channel.",
                 limit,
-                constants::MAX_PREM_ASC_EMOJIS,
             ));
         }
 

@@ -218,18 +218,14 @@ fn filter_embed(filter: Filter, premium: bool) -> Embed {
     if let Some(val) = filter.matches {
         let mut desc = format!("Message must match the following regex:\n```re\n{val}\n```");
         if !premium {
-            desc.push_str(
-                "\n:warning: This setting is ignored because this server doesn't have premium.",
-            );
+            desc.push_str("\n:warning: This setting is currently ignored.");
         }
         message_context.push(desc);
     }
     if let Some(val) = filter.not_matches {
         let mut desc = format!("Message must not match the following regex:\n```re\n{val}\n```");
         if !premium {
-            desc.push_str(
-                "\n:warning: This setting is ignored because this server doesn't have premium.",
-            );
+            desc.push_str("\n:warning: This setting is currently ignored.");
         }
         message_context.push(desc);
     }
