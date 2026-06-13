@@ -2,7 +2,6 @@ use twilight_interactions::command::{CommandModel, CommandOption, CreateCommand,
 
 use crate::{
     constants,
-    core::premium::is_premium::is_guild_premium,
     database::{
         models::{filter::Filter, filter_group::FilterGroup},
         validation::{
@@ -174,8 +173,6 @@ impl Edit {
             .await?;
             return Ok(());
         };
-
-        let premium = is_guild_premium(&ctx.bot, guild_id_i64, true).await?;
 
         // general info
         if let Some(val) = self.instant_pass {
@@ -395,12 +392,6 @@ impl Edit {
             if val == ".*" {
                 filter.matches = None;
             } else {
-                if !premium {
-                    ctx.respond_str("The `matches` condition is unavailable.", true)
-                        .await?;
-                    return Ok(());
-                }
-
                 filter.matches = Some(val);
             }
         }
@@ -420,12 +411,6 @@ impl Edit {
             if val == ".*" {
                 filter.not_matches = None;
             } else {
-                if !premium {
-                    ctx.respond_str("The `not-matches` condition is unavailable.", true)
-                        .await?;
-                    return Ok(());
-                }
-
                 filter.not_matches = Some(val);
             }
         }

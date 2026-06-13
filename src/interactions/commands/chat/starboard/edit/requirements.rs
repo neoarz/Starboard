@@ -1,10 +1,7 @@
 use twilight_interactions::command::{CommandModel, CreateCommand};
 
 use crate::{
-    core::{
-        emoji::{EmojiCommon, SimpleEmoji},
-        premium::is_premium::is_guild_premium,
-    },
+    core::emoji::{EmojiCommon, SimpleEmoji},
     database::{
         Starboard,
         validation::{
@@ -76,8 +73,6 @@ impl EditRequirements {
                 Some(starboard) => starboard,
             };
 
-        let is_prem = is_guild_premium(&ctx.bot, guild_id_i64, true).await?;
-
         if let Some(val) = self.required {
             let val = match validate_required(val, starboard.settings.required_remove) {
                 Ok(val) => val,
@@ -116,7 +111,6 @@ impl EditRequirements {
         if let Err(why) = validation::starboard_settings::validate_vote_emojis(
             &starboard.settings.upvote_emojis,
             &starboard.settings.downvote_emojis,
-            is_prem,
         ) {
             ctx.respond_str(&why, true).await?;
             return Ok(());
@@ -161,7 +155,7 @@ impl EditRequirements {
         }
 
         if let Some(val) = self.matches {
-            match validation::regex::validate_regex(val, is_prem) {
+            match validation::regex::validate_regex(val) {
                 Err(why) => {
                     ctx.respond_str(&why, true).await?;
                     return Ok(());
@@ -170,7 +164,7 @@ impl EditRequirements {
             }
         }
         if let Some(val) = self.not_matches {
-            match validation::regex::validate_regex(val, is_prem) {
+            match validation::regex::validate_regex(val) {
                 Err(why) => {
                     ctx.respond_str(&why, true).await?;
                     return Ok(());

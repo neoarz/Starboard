@@ -42,24 +42,6 @@ impl DbMember {
         .await
     }
 
-    pub async fn set_autoredeem_enabled(
-        pool: &sqlx::PgPool,
-        user_id: i64,
-        guild_id: i64,
-        autoredeem_enabled: bool,
-    ) -> sqlx::Result<()> {
-        sqlx::query!(
-            "UPDATE members SET autoredeem_enabled=$1 WHERE user_id=$2 AND guild_id=$3",
-            autoredeem_enabled,
-            user_id,
-            guild_id,
-        )
-        .fetch_all(pool)
-        .await?;
-
-        Ok(())
-    }
-
     pub fn stream_by_xp(pool: &sqlx::PgPool, guild_id: i64) -> BoxStream<'_, sqlx::Result<Self>> {
         sqlx::query_as!(
             Self,
@@ -82,20 +64,6 @@ impl DbMember {
         )
         .fetch_all(pool)
         .await
-    }
-
-    pub async fn list_autoredeem_by_user(
-        pool: &sqlx::PgPool,
-        user_id: i64,
-    ) -> sqlx::Result<Vec<i64>> {
-        let rows = sqlx::query!(
-            "SELECT guild_id FROM members WHERE user_id=$1 AND autoredeem_enabled=true",
-            user_id
-        )
-        .fetch_all(pool)
-        .await?;
-
-        Ok(rows.into_iter().map(|r| r.guild_id).collect())
     }
 
     pub async fn get(

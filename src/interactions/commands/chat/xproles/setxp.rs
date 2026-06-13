@@ -2,9 +2,8 @@ use twilight_interactions::command::{CommandModel, CreateCommand};
 use twilight_model::guild::Role;
 
 use crate::{
-    constants, core::premium::is_premium::is_guild_premium, database::XPRole,
-    errors::StarboardResult, get_guild_id, interactions::context::CommandCtx,
-    utils::id_as_i64::GetI64,
+    constants, database::XPRole, errors::StarboardResult, get_guild_id,
+    interactions::context::CommandCtx, utils::id_as_i64::GetI64,
 };
 
 #[derive(CommandModel, CreateCommand)]
@@ -20,12 +19,6 @@ pub struct SetXP {
 impl SetXP {
     pub async fn callback(self, mut ctx: CommandCtx) -> StarboardResult<()> {
         let guild_id = get_guild_id!(ctx).get_i64();
-
-        if !is_guild_premium(&ctx.bot, guild_id, true).await? {
-            ctx.respond_str("This command is unavailable.", true)
-                .await?;
-            return Ok(());
-        }
 
         if self.role.id.get_i64() == guild_id || self.role.managed {
             ctx.respond_str("You can't use that role for award roles.", true)

@@ -1,12 +1,8 @@
 use twilight_interactions::command::{CommandModel, CreateCommand};
 
 use crate::{
-    concat_format,
-    core::{posroles::update_posroles_for_guild, premium::is_premium::is_guild_premium},
-    errors::StarboardResult,
-    get_guild_id,
-    interactions::context::CommandCtx,
-    utils::id_as_i64::GetI64,
+    concat_format, core::posroles::update_posroles_for_guild, errors::StarboardResult,
+    get_guild_id, interactions::context::CommandCtx,
 };
 
 #[derive(CommandModel, CreateCommand)]
@@ -16,12 +12,6 @@ pub struct Refresh;
 impl Refresh {
     pub async fn callback(self, mut ctx: CommandCtx) -> StarboardResult<()> {
         let guild_id = get_guild_id!(ctx);
-
-        if !is_guild_premium(&ctx.bot, guild_id.get_i64(), true).await? {
-            ctx.respond_str("This command is unavailable.", true)
-                .await?;
-            return Ok(());
-        }
 
         ctx.defer(true).await?;
 

@@ -21,7 +21,6 @@ pub async fn get_message_status(
     message_obj: &MessageResult,
     points: i32,
     violates_exclusive_group: bool,
-    is_premium: bool,
 ) -> StarboardResult<MessageStatus> {
     let deleted = matches!(message_obj, MessageResult::Missing);
 
@@ -62,7 +61,7 @@ pub async fn get_message_status(
     }
 
     if let Some(required) = config.resolved.required {
-        if validate_regex(config, message_obj, is_premium) {
+        if validate_regex(config, message_obj) {
             #[allow(clippy::collapsible_if)]
             if points >= required as i32 {
                 return Ok(MessageStatus::Send(config.resolved.link_edits));
@@ -73,11 +72,7 @@ pub async fn get_message_status(
     Ok(MessageStatus::Update(config.resolved.link_edits))
 }
 
-fn validate_regex(config: &StarboardConfig, message_obj: &MessageResult, is_premium: bool) -> bool {
-    if !is_premium {
-        return true;
-    }
-
+fn validate_regex(config: &StarboardConfig, message_obj: &MessageResult) -> bool {
     if config.resolved.matches.is_none() && config.resolved.not_matches.is_none() {
         return true;
     }

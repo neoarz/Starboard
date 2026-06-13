@@ -62,22 +62,16 @@ pub struct RefreshMessage {
     sql_message: Option<Arc<DbMessage>>,
     orig_message: Option<MessageResult>,
     configs: Option<Arc<Vec<Arc<StarboardConfig>>>>,
-    is_premium: bool,
 }
 
 impl RefreshMessage {
-    pub fn new(
-        bot: Arc<StarboardBot>,
-        message_id: Id<MessageMarker>,
-        is_premium: bool,
-    ) -> RefreshMessage {
+    pub fn new(bot: Arc<StarboardBot>, message_id: Id<MessageMarker>) -> RefreshMessage {
         RefreshMessage {
             bot,
             message_id,
             configs: None,
             sql_message: None,
             orig_message: None,
-            is_premium,
         }
     }
 
@@ -262,7 +256,6 @@ impl RefreshStarboard {
             orig_message,
             referenced_message: ref_msg,
             orig_sql_message: sql_message,
-            is_premium: self.refresh.is_premium,
         };
 
         let action = get_message_status(
@@ -272,7 +265,6 @@ impl RefreshStarboard {
             &embedder.orig_message,
             points,
             violates_exclusive_group,
-            self.refresh.is_premium,
         )
         .await?;
 

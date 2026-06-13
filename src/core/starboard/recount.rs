@@ -7,7 +7,7 @@ use twilight_model::id::{
 
 use crate::{
     client::bot::StarboardBot,
-    core::{emoji::SimpleEmoji, premium::is_premium::is_guild_premium},
+    core::emoji::SimpleEmoji,
     database::{DbMember, DbMessage, DbUser, Vote},
     errors::StarboardResult,
     utils::{id_as_i64::GetI64, into_id::IntoId},
@@ -84,8 +84,7 @@ pub async fn recount_votes(
         }
     }
 
-    let is_premium = is_guild_premium(&bot, guild_id_i64, true).await?;
-    let mut refresh = RefreshMessage::new(bot.clone(), message_id, is_premium);
+    let mut refresh = RefreshMessage::new(bot.clone(), message_id);
     refresh.set_sql_message(orig);
     refresh.refresh(false).await?;
 

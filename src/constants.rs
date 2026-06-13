@@ -10,8 +10,6 @@ pub const YEAR_SECONDS: i64 = 31_557_600;
 pub const MONTH_SECONDS: i64 = 2_630_016;
 pub const MONTH_DAYS: u64 = 31;
 
-pub const CREDITS_PER_MONTH: u64 = 3;
-
 // Links
 pub const INVITE_URL: &str = "https://discord.com/api/oauth2/authorize?client_id=700796664276844612&permissions=805661760&scope=bot%20applications.commands";
 pub const SUPPORT_URL: &str = "https://discord.gg/3gK8mSA";
@@ -25,7 +23,6 @@ pub const DOCS_FILTERS: &str = "https://docs.starboard.best/docs/filters";
 
 // Tasks
 pub const UPDATE_PRS_DELAY: Duration = Duration::from_secs(60 * 60);
-pub const CHECK_EXPIRED_PREMIUM: Duration = Duration::from_secs(60 * 60);
 
 // Cache size
 pub const MAX_MESSAGES: u64 = 50_000;
@@ -57,10 +54,8 @@ pub const MAX_OLDER_THAN: i64 = YEAR_SECONDS * 50;
 pub const MAX_MAX_CHARS: i16 = 5_000;
 pub const MAX_MIN_CHARS: i16 = 5_000;
 
-pub const MAX_ASC_EMOJIS: usize = 3;
-pub const MAX_PREM_ASC_EMOJIS: usize = 20;
-pub const MAX_AUTOSTAR: i64 = 3;
-pub const MAX_PREM_AUTOSTAR: i64 = 50;
+pub const MAX_ASC_EMOJIS: usize = 20;
+pub const MAX_AUTOSTAR: i64 = 50;
 
 // Starboard Validation
 pub const MIN_REQUIRED: i16 = 1;
@@ -75,10 +70,8 @@ pub const MAX_COOLDOWN_CAPACITY: i16 = 3600;
 //          struct.
 pub const MAX_COOLDOWN_PERIOD: i16 = 3600;
 
-pub const MAX_VOTE_EMOJIS: usize = 3;
-pub const MAX_PREM_VOTE_EMOJIS: usize = 20;
-pub const MAX_STARBOARDS: i64 = 3;
-pub const MAX_PREM_STARBOARDS: i64 = 20;
+pub const MAX_VOTE_EMOJIS: usize = 20;
+pub const MAX_STARBOARDS: i64 = 20;
 
 // Override Validation
 pub const MAX_CHANNELS_PER_OVERRIDE: usize = 100;

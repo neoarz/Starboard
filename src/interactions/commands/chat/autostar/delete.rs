@@ -1,7 +1,6 @@
 use twilight_interactions::command::{CommandModel, CreateCommand};
 
 use crate::{
-    core::premium::{is_premium::is_guild_premium, locks::refresh_premium_locks},
     database::AutoStarChannel,
     errors::StarboardResult,
     get_guild_id,
@@ -36,12 +35,6 @@ impl DeleteAutoStarChannel {
         };
 
         let ret = AutoStarChannel::delete(&ctx.bot.pool, &self.name, guild_id.get_i64()).await?;
-        refresh_premium_locks(
-            &ctx.bot,
-            guild_id.get_i64(),
-            is_guild_premium(&ctx.bot, guild_id.get_i64(), true).await?,
-        )
-        .await?;
         if ret.is_none() {
             btn_ctx
                 .edit_str("No autostar channel with that name was found.", true)

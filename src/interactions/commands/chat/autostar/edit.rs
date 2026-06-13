@@ -1,10 +1,7 @@
 use twilight_interactions::command::{CommandModel, CreateCommand};
 
 use crate::{
-    core::{
-        emoji::{EmojiCommon, SimpleEmoji},
-        premium::is_premium::is_guild_premium,
-    },
+    core::emoji::{EmojiCommon, SimpleEmoji},
     database::AutoStarChannel,
     errors::StarboardResult,
     get_guild_id,
@@ -49,11 +46,9 @@ impl EditAutoStar {
             Some(asc) => asc,
         };
 
-        let is_prem = is_guild_premium(&ctx.bot, guild_id_i64, true).await?;
-
         if let Some(val) = self.emojis {
             let emojis = SimpleEmoji::from_user_input(&val, &ctx.bot, guild_id).into_stored();
-            if let Err(why) = asc.set_emojis(emojis, is_prem) {
+            if let Err(why) = asc.set_emojis(emojis) {
                 ctx.respond_str(&why, true).await?;
                 return Ok(());
             }

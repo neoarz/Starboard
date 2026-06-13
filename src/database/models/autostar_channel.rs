@@ -144,12 +144,8 @@ impl AutoStarChannel {
     }
 
     // validation
-    pub fn set_emojis(&mut self, val: Vec<String>, premium: bool) -> Result<(), String> {
-        let limit = if premium {
-            constants::MAX_PREM_ASC_EMOJIS
-        } else {
-            constants::MAX_ASC_EMOJIS
-        };
+    pub fn set_emojis(&mut self, val: Vec<String>) -> Result<(), String> {
+        let limit = constants::MAX_ASC_EMOJIS;
 
         if val.len() > limit {
             return Err(format!(

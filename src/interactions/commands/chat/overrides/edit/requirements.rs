@@ -3,7 +3,6 @@ use twilight_interactions::command::{CommandModel, CreateCommand};
 use crate::{
     core::{
         emoji::{EmojiCommon, SimpleEmoji},
-        premium::is_premium::is_guild_premium,
         starboard::config::StarboardConfig,
     },
     database::{
@@ -85,8 +84,6 @@ impl EditRequirements {
         };
         let mut settings = ov.get_overrides()?;
 
-        let is_prem = is_guild_premium(&ctx.bot, guild_id_i64, true).await?;
-
         if let Some(val) = self.required {
             let val = match validate_required(val, resolved.required_remove) {
                 Ok(val) => val,
@@ -131,7 +128,6 @@ impl EditRequirements {
                 .downvote_emojis
                 .as_ref()
                 .unwrap_or(&resolved.downvote_emojis),
-            is_prem,
         ) {
             ctx.respond_str(&why, true).await?;
             return Ok(());
@@ -176,7 +172,7 @@ impl EditRequirements {
         }
 
         if let Some(val) = self.matches {
-            match validation::regex::validate_regex(val, is_prem) {
+            match validation::regex::validate_regex(val) {
                 Err(why) => {
                     ctx.respond_str(&why, true).await?;
                     return Ok(());
@@ -185,7 +181,7 @@ impl EditRequirements {
             }
         }
         if let Some(val) = self.not_matches {
-            match validation::regex::validate_regex(val, is_prem) {
+            match validation::regex::validate_regex(val) {
                 Err(why) => {
                     ctx.respond_str(&why, true).await?;
                     return Ok(());

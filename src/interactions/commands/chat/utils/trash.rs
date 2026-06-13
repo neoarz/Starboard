@@ -1,7 +1,7 @@
 use twilight_interactions::command::{CommandModel, CreateCommand};
 
 use crate::{
-    core::{premium::is_premium::is_guild_premium, starboard::handle::RefreshMessage},
+    core::starboard::handle::RefreshMessage,
     database::DbMessage,
     errors::StarboardResult,
     get_guild_id,
@@ -48,8 +48,7 @@ impl Trash {
             .await?;
         ctx.respond_str("Message trashed.", true).await?;
 
-        let is_premium = is_guild_premium(&ctx.bot, guild_id, true).await?;
-        RefreshMessage::new(ctx.bot, orig.message_id.into_id(), is_premium)
+        RefreshMessage::new(ctx.bot, orig.message_id.into_id())
             .refresh(true)
             .await?;
 
@@ -86,8 +85,7 @@ impl UnTrash {
 
         DbMessage::set_trashed(&ctx.bot.pool, orig.message_id, false, None).await?;
         ctx.respond_str("Message untrashed.", true).await?;
-        let is_premium = is_guild_premium(&ctx.bot, guild_id, true).await?;
-        RefreshMessage::new(ctx.bot, orig.message_id.into_id(), is_premium)
+        RefreshMessage::new(ctx.bot, orig.message_id.into_id())
             .refresh(true)
             .await?;
 

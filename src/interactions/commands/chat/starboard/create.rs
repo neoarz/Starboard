@@ -7,7 +7,6 @@ use twilight_model::{
 
 use crate::{
     constants,
-    core::premium::is_premium::is_guild_premium,
     database::{DbGuild, Starboard, validation},
     errors::StarboardResult,
     get_guild_id,
@@ -44,11 +43,7 @@ impl CreateStarboard {
         let channel_id = self.channel.id.get_i64();
 
         let count = Starboard::count_by_guild(&ctx.bot.pool, guild_id).await?;
-        let limit = if is_guild_premium(&ctx.bot, guild_id, true).await? {
-            constants::MAX_PREM_STARBOARDS
-        } else {
-            constants::MAX_STARBOARDS
-        };
+        let limit = constants::MAX_STARBOARDS;
         if count >= limit {
             ctx.respond_str(
                 &format!("You can only have up to {} starboards.", limit,),

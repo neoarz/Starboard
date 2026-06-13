@@ -101,7 +101,6 @@ pub struct Cache {
     // database side
     pub autostar_channel_ids: AsyncDashSet<Id<ChannelMarker>>,
     pub guild_vote_emojis: AsyncDashMap<i64, Vec<SimpleEmoji>>,
-    pub guild_premium: AsyncDashMap<i64, bool>,
 
     // misc
     pub responses: MokaCache<Id<MessageMarker>, Id<MessageMarker>>,
@@ -119,7 +118,6 @@ impl Cache {
 
             autostar_channel_ids: autostar_channel_ids.into(),
             guild_vote_emojis: DashMap::new().into(),
-            guild_premium: DashMap::new().into(),
 
             responses: moka_cache(
                 constants::MAX_STORED_RESPONSES,

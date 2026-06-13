@@ -3,10 +3,7 @@ use std::sync::Arc;
 use crate::{
     cache::{MessageResult, models::message::CachedMessage},
     client::bot::StarboardBot,
-    core::{
-        premium::is_premium::is_guild_premium,
-        starboard::{config::StarboardConfig, webhooks::get_valid_webhook},
-    },
+    core::starboard::{config::StarboardConfig, webhooks::get_valid_webhook},
     database::{DbMessage, Starboard},
     errors::StarboardResult,
     utils::{get_status::get_status, id_as_i64::GetI64, into_id::IntoId},
@@ -22,7 +19,6 @@ pub struct Embedder {
     pub orig_message: MessageResult,
     pub orig_sql_message: Arc<DbMessage>,
     pub referenced_message: Option<Arc<CachedMessage>>,
-    pub is_premium: bool,
 }
 
 impl Embedder {
@@ -41,23 +37,16 @@ impl Embedder {
         let guild_id = self.config.starboard.guild_id.into_id();
         let sb_channel_id = self.config.starboard.channel_id.into_id();
 
-        let built = match self
-            .build(false, self.config.resolved.use_webhook && !self.is_premium)
-            .await?
-        {
+        let built = match self.build(false, false).await? {
             BuiltStarboardEmbed::Full(built) => built,
             BuiltStarboardEmbed::Partial(_) => panic!("Tried to send an unbuildable message."),
         };
 
-        let attachments = if self.is_premium {
-            let (attachments, errors) = built.upload_attachments.as_attachments(bot).await;
-            for e in errors {
-                bot.handle_error(&e).await;
-            }
-            Some(attachments)
-        } else {
-            None
-        };
+        let (attachments, errors) = built.upload_attachments.as_attachments(bot).await;
+        for e in errors {
+            bot.handle_error(&e).await;
+        }
+        let attachments = Some(attachments);
 
         let forum_post_name = if bot.cache.is_channel_forum(guild_id, sb_channel_id) {
             let name = &built.embeds[0].author.as_ref().unwrap().name;
@@ -209,9 +198,7 @@ impl Embedder {
             (None, false)
         };
 
-        let is_prem = is_guild_premium(bot, self.config.starboard.guild_id, true).await?;
-
-        match self.build(force_partial, wh.is_some() && !is_prem).await? {
+        match self.build(force_partial, false).await? {
             BuiltStarboardEmbed::Full(built) => {
                 if let Some(wh) = wh {
                     let mut ud = bot

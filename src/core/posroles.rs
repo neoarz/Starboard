@@ -14,8 +14,6 @@ use crate::{
     utils::{id_as_i64::GetI64, into_id::IntoId},
 };
 
-use super::premium::is_premium::is_guild_premium;
-
 pub struct GuildPRUpdateResult {
     pub removed_roles: i32,
     pub added_roles: i32,
@@ -41,16 +39,6 @@ pub async fn loop_update_posroles(bot: Arc<StarboardBot>) {
 
         let mut tasks = Vec::new();
         for guild in guilds {
-            let is_prem = match is_guild_premium(&bot, guild.guild_id, true).await {
-                Ok(is_prem) => is_prem,
-                Err(why) => {
-                    bot.handle_error(&why).await;
-                    continue;
-                }
-            };
-            if !is_prem {
-                continue;
-            }
             let task = tokio::spawn(update_posroles_for_guild(
                 bot.clone(),
                 guild.guild_id.into_id(),

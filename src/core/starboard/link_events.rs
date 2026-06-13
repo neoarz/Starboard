@@ -8,7 +8,6 @@ use twilight_model::{
 
 use crate::{
     client::bot::StarboardBot,
-    core::premium::is_premium::is_guild_premium,
     database::{DbMessage, Starboard, StarboardMessage, StarboardOverride},
     errors::StarboardResult,
     utils::{id_as_i64::GetI64, into_id::IntoId},
@@ -25,8 +24,7 @@ pub async fn handle_message_update(
         None => return Ok(()),
     };
 
-    let is_premium = is_guild_premium(&bot, msg.guild_id, true).await?;
-    let mut refresh = RefreshMessage::new(bot, event.id, is_premium);
+    let mut refresh = RefreshMessage::new(bot, event.id);
     refresh.set_sql_message(msg);
     refresh.refresh(true).await?;
 
@@ -109,8 +107,7 @@ pub async fn handle_message_delete(
         }
     };
 
-    let is_premium = is_guild_premium(&bot, msg.guild_id, true).await?;
-    let mut refresh = RefreshMessage::new(bot, msg.message_id.into_id(), is_premium);
+    let mut refresh = RefreshMessage::new(bot, msg.message_id.into_id());
     if !must_force {
         refresh.set_sql_message(msg);
     }

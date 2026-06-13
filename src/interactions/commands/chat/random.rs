@@ -7,7 +7,6 @@ use crate::{
     client::bot::StarboardBot,
     core::{
         embedder::{Embedder, builder::BuiltStarboardEmbed},
-        premium::is_premium::is_guild_premium,
         starboard::config::StarboardConfig,
     },
     database::{DbMessage, Starboard, StarboardMessage, StarboardOverride},
@@ -100,7 +99,6 @@ pub async fn get_embedder(
         None
     };
 
-    let is_premium = is_guild_premium(&bot, config.starboard.guild_id, true).await?;
     let embedder = Embedder {
         bot,
         points: msg.last_known_point_count as i32,
@@ -108,7 +106,6 @@ pub async fn get_embedder(
         orig_message: Some(orig_msg).into(),
         referenced_message: ref_msg,
         orig_sql_message: Arc::new(orig_sql_msg),
-        is_premium,
     };
 
     Ok(Some(embedder))

@@ -16,9 +16,7 @@ use crate::{
     utils::{id_as_i64::GetI64, notify},
 };
 
-use super::{
-    filters::FilterEvaluater, has_image::has_image, premium::is_premium::is_guild_premium,
-};
+use super::{filters::FilterEvaluater, has_image::has_image};
 
 pub async fn handle(
     bot: &StarboardBot,
@@ -38,16 +36,12 @@ pub async fn handle(
     }
 
     // Check cooldown
-    if is_guild_premium(bot, guild_id.get_i64(), true).await? {
-        if bot
-            .cooldowns
-            .prem_autostar_send
-            .trigger(&guild_id)
-            .is_some()
-        {
-            return Ok(());
-        }
-    } else if bot.cooldowns.autostar_send.trigger(&guild_id).is_some() {
+    if bot
+        .cooldowns
+        .prem_autostar_send
+        .trigger(&guild_id)
+        .is_some()
+    {
         return Ok(());
     }
 

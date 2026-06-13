@@ -1,7 +1,7 @@
 use twilight_interactions::command::{CommandModel, CreateCommand};
 
 use crate::{
-    core::{premium::is_premium::is_guild_premium, starboard::handle::RefreshMessage},
+    core::starboard::handle::RefreshMessage,
     database::DbMessage,
     errors::StarboardResult,
     get_guild_id,
@@ -43,8 +43,7 @@ impl Refresh {
 
         ctx.defer(true).await?;
 
-        let is_premium = is_guild_premium(&ctx.bot, guild_id, true).await?;
-        RefreshMessage::new(ctx.bot.clone(), message_id.into_id(), is_premium)
+        RefreshMessage::new(ctx.bot.clone(), message_id.into_id())
             .refresh(true)
             .await?;
 

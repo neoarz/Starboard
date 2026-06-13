@@ -1,7 +1,7 @@
 use twilight_interactions::command::{CommandModel, CreateCommand};
 
 use crate::{
-    core::{premium::is_premium::is_guild_premium, starboard::handle::RefreshMessage},
+    core::starboard::handle::RefreshMessage,
     database::DbMessage,
     errors::StarboardResult,
     get_guild_id,
@@ -35,7 +35,7 @@ impl Freeze {
             return Ok(());
         };
 
-        if orig.guild_id != get_guild_id!(ctx) {
+        if orig.guild_id != guild_id {
             ctx.respond_str("That message belongs to a different server.", true)
                 .await?;
             return Ok(());
@@ -46,8 +46,7 @@ impl Freeze {
             .unwrap();
         ctx.respond_str("Message frozen.", true).await?;
 
-        let is_premium = is_guild_premium(&ctx.bot, guild_id, true).await?;
-        let mut refresh = RefreshMessage::new(ctx.bot, orig.message_id.into_id(), is_premium);
+        let mut refresh = RefreshMessage::new(ctx.bot, orig.message_id.into_id());
         refresh.refresh(true).await?;
 
         Ok(())
@@ -75,7 +74,7 @@ impl UnFreeze {
             return Ok(());
         };
 
-        if orig.guild_id != get_guild_id!(ctx) {
+        if orig.guild_id != guild_id {
             ctx.respond_str("That message belongs to a different server.", true)
                 .await?;
             return Ok(());
@@ -86,8 +85,7 @@ impl UnFreeze {
             .unwrap();
         ctx.respond_str("Message unfrozen.", true).await?;
 
-        let is_premium = is_guild_premium(&ctx.bot, guild_id, true).await?;
-        let mut refresh = RefreshMessage::new(ctx.bot, orig.message_id.into_id(), is_premium);
+        let mut refresh = RefreshMessage::new(ctx.bot, orig.message_id.into_id());
         refresh.refresh(true).await?;
 
         Ok(())
