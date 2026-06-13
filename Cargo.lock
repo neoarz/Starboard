@@ -3256,6 +3256,7 @@ dependencies = [
  "twilight-util",
  "twilight-validate",
  "unicode-segmentation",
+ "url",
 ]
 
 [[package]]

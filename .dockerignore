@@ -1,0 +1,15 @@
+.git
+.github
+.env
+.env.*
+!.env.example
+target
+debug
+Dockerfile
+compose.yaml
+.dockerignore
+README.md
+LICENSE
+*.log
+*.tmp
+**/*.rs.bk

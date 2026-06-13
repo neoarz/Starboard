@@ -25,7 +25,24 @@ Currently, I offer support for self-hosting the bot if you get stuck - just join
 
 This guide assumes that you already have a VPS to host the bot on. Some good low-cost providers are https://www.netcup.eu (what the main bot uses) and https://alphavps.com.
 
-I'll add a proper self-hosting guide later, but essentially you need a PostgreSQL database, a .env file filled with the required variables from .env.example, and the pre-build docker image. To get the latest docker image from docker hub, use `docker pull circuitsacul/starboard:latest`. Start the bot with `docker run -d --env-file .env --network=host circuitsacul/starboard:latest`.
+Copy `.env.example` to `.env`, fill in the required values, then start Starboard and PostgreSQL with Docker Compose:
+
+```sh
+cp .env.example .env
+docker compose up -d
+```
+
+The required `.env` values are:
+
+```env
+DISCORD_TOKEN=
+BOT_ID=
+POSTGRES_PASSWORD=
+```
+
+`DISCORD_TOKEN` is your bot token, `BOT_ID` is your bot application's user ID, and `POSTGRES_PASSWORD` can be any strong password for the local Compose database. The Compose setup reads `.env` automatically, creates a persistent PostgreSQL volume, and passes the database settings to Starboard. You only need to set `SB_DATABASE_URL` yourself when connecting to an existing external database.
+
+To use the pre-built Docker image from Docker Hub instead, pull `circuitsacul/starboard:latest` and start the bot with `docker run -d --env-file .env --network=host circuitsacul/starboard:latest`.
 
 ## Migration from Starboard-3
 If you're already hosting starboard-3 and want to switch to starboard-4, you have to alter the database structure.

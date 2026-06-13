@@ -1,5 +1,6 @@
 use dotenv::dotenv;
 use std::env;
+use url::Url;
 
 pub struct Config {
     pub token: String,
@@ -19,44 +20,74 @@ pub struct Config {
 }
 
 impl Config {
+    fn get_optional_env(name: &str) -> Option<String> {
+        env::var(name).ok().filter(|value| !value.trim().is_empty())
+    }
+
+    fn get_required_env(name: &str) -> String {
+        Self::get_optional_env(name).unwrap_or_else(|| panic!("{name} not set"))
+    }
+
+    fn get_optional_id(name: &str) -> Option<u64> {
+        Self::get_optional_env(name).map(|value| value.parse().expect("Invalid ID"))
+    }
+
+    fn database_url_from_env() -> String {
+        if let Some(url) = Self::get_optional_env("SB_DATABASE_URL") {
+            return url;
+        }
+
+        let host = env::var("POSTGRES_HOST").unwrap_or_else(|_| "db".to_string());
+        let port = env::var("POSTGRES_PORT").unwrap_or_else(|_| "5432".to_string());
+        let database = Self::get_required_env("POSTGRES_DB");
+        let username = Self::get_required_env("POSTGRES_USER");
+        let password = Self::get_required_env("POSTGRES_PASSWORD");
+
+        let mut url = Url::parse(&format!("postgresql://{host}:{port}/{database}"))
+            .expect("Invalid PostgreSQL host, port, or database name");
+        url.set_username(&username)
+            .expect("Invalid PostgreSQL username");
+        url.set_password(Some(&password))
+            .expect("Invalid PostgreSQL password");
+
+        url.into()
+    }
+
     pub fn from_env() -> Self {
         match dotenv() {
             Ok(_) => {}
             Err(why) => eprintln!("Failed to load .env: {why}"),
         };
-        let token = env::var("DISCORD_TOKEN").expect("DISCORD_TOKEN not set");
-        let patreon_token = env::var("PATREON_TOKEN").ok();
-        let sentry = env::var("SENTRY_URL").ok();
+        let token = Self::get_required_env("DISCORD_TOKEN");
+        let patreon_token = Self::get_optional_env("PATREON_TOKEN");
+        let sentry = Self::get_optional_env("SENTRY_URL");
         let shards = env::var("SHARDS")
             .unwrap_or_else(|_| "1".to_string())
             .parse()
             .unwrap();
-        let db_url = env::var("SB_DATABASE_URL").expect("No database url specified.");
-        let db_connections = env::var("DB_MAX_DB_CONNECTIONS")
+        let db_url = Self::database_url_from_env();
+        let db_connections = Self::get_optional_env("DB_MAX_DB_CONNECTIONS")
             .map(|v| v.parse().unwrap())
             .unwrap_or(10);
-        let error_channel = env::var("ERROR_CHANNEL_ID")
-            .ok()
-            .map(|v| v.parse().expect("Invalid ID for error log channel."));
+        let error_channel = Self::get_optional_id("ERROR_CHANNEL_ID");
         let development = env::var("DEVELOPMENT")
             .unwrap_or_else(|_| "false".to_string())
             .parse()
             .expect("Invalid boolean for DEVELOPMENT.");
-        let owner_ids = env::var("OWNER_IDS").ok().map(|var| {
+        let owner_ids = Self::get_optional_env("OWNER_IDS").map(|var| {
             var.split(',')
                 .map(|item| item.trim().parse().expect("invalid owner id"))
                 .collect()
         });
-        let bot_id = env::var("BOT_ID")
-            .expect("No BOT_ID.")
+        let bot_id = Self::get_required_env("BOT_ID")
             .parse()
             .expect("Invalid BOT_ID");
 
-        let main_guild = env::var("MAIN_GUILD").ok().map(|v| v.parse().unwrap());
-        let patron_role = env::var("PATRON_ROLE").ok().map(|v| v.parse().unwrap());
-        let supporter_role = env::var("SUPPORTER_ROLE").ok().map(|v| v.parse().unwrap());
+        let main_guild = Self::get_optional_id("MAIN_GUILD");
+        let patron_role = Self::get_optional_id("PATRON_ROLE");
+        let supporter_role = Self::get_optional_id("SUPPORTER_ROLE");
 
-        let proxy = env::var("PROXY").ok();
+        let proxy = Self::get_optional_env("PROXY");
 
         Config {
             token,
