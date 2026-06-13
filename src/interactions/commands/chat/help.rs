@@ -5,10 +5,7 @@ use twilight_model::channel::message::{
 };
 use twilight_util::builder::embed::EmbedFieldBuilder;
 
-use crate::{
-    concat_format, constants, errors::StarboardResult, interactions::context::CommandCtx,
-    utils::embed,
-};
+use crate::{constants, errors::StarboardResult, interactions::context::CommandCtx, utils::embed};
 
 fn buttons() -> Vec<Component> {
     let link_btn = |name: &str, link: &str| {
@@ -25,8 +22,6 @@ fn buttons() -> Vec<Component> {
     };
 
     let buttons = vec![
-        link_btn("Invite", constants::INVITE_URL),
-        link_btn("Support", constants::SUPPORT_URL),
         link_btn("Documentation", constants::DOCS_URL),
         link_btn("Source", constants::SOURCE_URL),
     ];
@@ -46,8 +41,8 @@ pub struct Help;
 impl Help {
     pub async fn callback(self, mut ctx: CommandCtx) -> StarboardResult<()> {
         let emb = embed::build()
-            .title("Starboard - The Best Discord Starboard")
-            .description("Starboard is a reliable and feature-rich starboard bot for Discord.")
+            .title("Starboard")
+            .description("A self-hosted starboard bot for this server.")
             .field(EmbedFieldBuilder::new(
                 "Useful Commands",
                 concat!(
@@ -67,15 +62,6 @@ impl Help {
                     "- Per-role starboard configuration\n",
                     "- Regex-based matching\n",
                     "- XP and position-based award roles\n",
-                ),
-            ))
-            .field(EmbedFieldBuilder::new(
-                "Support Starboard",
-                concat_format!(
-                    "If you like Starboard and want to support it, you can do ";
-                    "so by [voting]({}) or " <- constants::VOTE_URL;
-                    "[leaving a review]({}) " <- constants::REVIEW_URL;
-                    "on Top.GG.";
                 ),
             ))
             .build();

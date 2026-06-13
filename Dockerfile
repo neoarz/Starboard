@@ -22,7 +22,7 @@ COPY ./src ./src
 COPY ./.sqlx ./.sqlx
 
 # install starboard
-RUN cargo build --release
+RUN touch src/main.rs && cargo build --release
 
 # get rid of cargo
 FROM debian:bookworm-slim

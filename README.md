@@ -1,9 +1,8 @@
 # Starboard-4
-A feature-rich and reliable Starboard bot, trusted by thousands of servers.
+A self-hosted Starboard bot for one Discord server.
 
- - [Invite Starboard](https://discord.com/api/oauth2/authorize?client_id=700796664276844612&permissions=275683339328&scope=applications.commands%20bot)
- - [Get Support](https://discord.gg/3gK8mSA)
- - [Documentation](https://starboard.best)
+ - [Documentation](https://docs.starboard.best)
+ - [Source](https://github.com/neoarz/Starboard)
 
 ## Features
  - Multiple starboards per server
@@ -19,12 +18,6 @@ A feature-rich and reliable Starboard bot, trusted by thousands of servers.
  - Use `/starboards edit [behavior|requirements|style|embed] name: starboard-name [options...]` to edit a starboard.
 
 ## Self-hosting
-You're welcome to self-host this bot if you like, as well as fork it and add your own changes. If there are features you wish the main bot had, you're also welcome to open PRs or make an issue requesting features.
-
-Currently, I offer support for self-hosting the bot if you get stuck - just join the support server, and create a thread with the "Self Hosting" tag.
-
-This guide assumes that you already have a VPS to host the bot on. Some good low-cost providers are https://www.netcup.eu (what the main bot uses) and https://alphavps.com.
-
 Copy `.env.example` to `.env`, fill in the required values, then start Starboard and PostgreSQL with Docker Compose:
 
 ```sh
@@ -37,12 +30,11 @@ The required `.env` values are:
 ```env
 DISCORD_TOKEN=
 BOT_ID=
+GUILD_ID=
 POSTGRES_PASSWORD=
 ```
 
-`DISCORD_TOKEN` is your bot token, `BOT_ID` is your bot application's user ID, and `POSTGRES_PASSWORD` can be any strong password for the local Compose database. The Compose setup reads `.env` automatically, creates a persistent PostgreSQL volume, and passes the database settings to Starboard. You only need to set `SB_DATABASE_URL` yourself when connecting to an existing external database.
-
-To use the pre-built Docker image from Docker Hub instead, pull `circuitsacul/starboard:latest` and start the bot with `docker run -d --env-file .env --network=host circuitsacul/starboard:latest`.
+`DISCORD_TOKEN` is your bot token, `BOT_ID` is your bot application's user ID, `GUILD_ID` is the only Discord server ID the bot should run in, and `POSTGRES_PASSWORD` can be any strong password for the local Compose database. The Compose setup reads `.env` automatically, creates a persistent PostgreSQL volume, and passes the database settings to Starboard. You only need to set `SB_DATABASE_URL` yourself when connecting to an existing external database.
 
 ## Migration from Starboard-3
 If you're already hosting starboard-3 and want to switch to starboard-4, you have to alter the database structure.

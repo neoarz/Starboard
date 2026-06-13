@@ -11,11 +11,7 @@ pub const MONTH_SECONDS: i64 = 2_630_016;
 pub const MONTH_DAYS: u64 = 31;
 
 // Links
-pub const INVITE_URL: &str = "https://discord.com/api/oauth2/authorize?client_id=700796664276844612&permissions=805661760&scope=bot%20applications.commands";
-pub const SUPPORT_URL: &str = "https://discord.gg/3gK8mSA";
-pub const SOURCE_URL: &str = "https://github.com/CircuitSacul/Starboard-4";
-pub const VOTE_URL: &str = "https://top.gg/bot/700796664276844612/vote";
-pub const REVIEW_URL: &str = "https://top.gg/bot/700796664276844612#reviews";
+pub const SOURCE_URL: &str = "https://github.com/neoarz/Starboard";
 
 // Docs
 pub const DOCS_URL: &str = "https://docs.starboard.best";
