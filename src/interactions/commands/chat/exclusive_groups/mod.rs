@@ -4,16 +4,12 @@ mod rename;
 
 use twilight_interactions::command::{CommandModel, CreateCommand};
 
-use crate::{
-    errors::StarboardResult,
-    interactions::{commands::permissions::manage_channels, context::CommandCtx},
-};
+use crate::{errors::StarboardResult, interactions::context::CommandCtx};
 
 #[derive(CommandModel, CreateCommand)]
 #[command(
     name = "exclusive-groups",
     desc = "Manage exclusive groups for starboards.",
-    default_permissions = "manage_channels",
     dm_permission = false
 )]
 pub enum ExclusiveGroups {

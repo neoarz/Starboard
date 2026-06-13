@@ -83,7 +83,7 @@ pub async fn run_sql(
 
     let mut final_result = String::new();
 
-    if rollback || !bot.config.development {
+    if rollback {
         tx.rollback().await?;
     } else {
         tx.commit().await?;

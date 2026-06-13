@@ -9,19 +9,11 @@ mod view;
 
 use twilight_interactions::command::{CommandModel, CreateCommand};
 
-use crate::{
-    errors::StarboardResult,
-    interactions::{commands::permissions::manage_roles_channels, context::CommandCtx},
-};
+use crate::{errors::StarboardResult, interactions::context::CommandCtx};
 
 #[allow(clippy::large_enum_variant)] // Edit(edit::Edit) being the culprit
 #[derive(CommandModel, CreateCommand)]
-#[command(
-    name = "filters",
-    desc = "Manage filters.",
-    default_permissions = "manage_roles_channels",
-    dm_permission = false
-)]
+#[command(name = "filters", desc = "Manage filters.", dm_permission = false)]
 pub enum Filters {
     #[command(name = "create-group")]
     CreateGroup(create_group::CreateGroup),

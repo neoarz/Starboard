@@ -9,8 +9,10 @@ services:
     environment:
       DISCORD_TOKEN: ${DISCORD_TOKEN:?Set DISCORD_TOKEN in .env}
       BOT_ID: ${BOT_ID:?Set BOT_ID in .env}
-      DEVELOPMENT: ${DEVELOPMENT:-true}
+      GUILD_ID: ${GUILD_ID:?Set GUILD_ID in .env}
       OWNER_IDS: ${OWNER_IDS:-}
+      CONFIG_USER_IDS: ${CONFIG_USER_IDS:-}
+      CONFIG_ROLE_IDS: ${CONFIG_ROLE_IDS:-}
       ERROR_WEBHOOK_URL: ${ERROR_WEBHOOK_URL:-}
       SB_DATABASE_URL: ${SB_DATABASE_URL:-}
       POSTGRES_HOST: db

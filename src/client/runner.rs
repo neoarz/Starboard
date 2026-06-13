@@ -29,10 +29,6 @@ pub async fn run(bot: StarboardBot) {
     let bot = Arc::new(bot);
     Cooldowns::start(bot.clone());
 
-    if bot.config.development {
-        println!("Running bot in development mode.");
-    }
-
     // start background tasks
     tokio::spawn(loop_update_posroles(bot.clone()));
 

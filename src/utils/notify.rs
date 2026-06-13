@@ -12,12 +12,6 @@ pub async fn notify(
     user_id: Id<UserMarker>,
     message: &str,
 ) -> StarboardResult<()> {
-    if bot.config.development {
-        println!("Development, skipping notification:");
-        println!("{message}");
-        return Ok(());
-    }
-
     let comp = Component::ActionRow(ActionRow {
         components: vec![Component::Button(Button {
             sku_id: None,

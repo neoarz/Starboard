@@ -20,7 +20,15 @@ pub async fn handle_interaction(
     match data {
         InteractionData::ApplicationCommand(data) => {
             let data = *data.clone();
-            let ctx = Ctx::new(bot, interaction, data);
+            let mut ctx = Ctx::new(bot, interaction, data);
+
+            if ctx.interaction.guild_id != Some(ctx.bot.config.guild_id) {
+                if matches!(ctx.interaction.kind, InteractionType::ApplicationCommand) {
+                    ctx.respond_str("This bot is not configured for this server.", true)
+                        .await?;
+                }
+                return Ok(());
+            }
 
             match ctx.interaction.kind {
                 InteractionType::ApplicationCommandAutocomplete => handle_autocomplete(ctx).await?,

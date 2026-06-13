@@ -7,18 +7,10 @@ mod view;
 
 use twilight_interactions::command::{CommandModel, CreateCommand};
 
-use crate::{
-    errors::StarboardResult,
-    interactions::{commands::permissions::manage_channels, context::CommandCtx},
-};
+use crate::{errors::StarboardResult, interactions::context::CommandCtx};
 
 #[derive(CommandModel, CreateCommand)]
-#[command(
-    name = "overrides",
-    desc = "Manage overrides.",
-    dm_permission = false,
-    default_permissions = "manage_channels"
-)]
+#[command(name = "overrides", desc = "Manage overrides.", dm_permission = false)]
 pub enum Overrides {
     #[command(name = "create")]
     Create(create::CreateOverride),

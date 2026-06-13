@@ -1,6 +1,9 @@
 use dotenv::dotenv;
 use std::env;
-use twilight_model::id::{Id, marker::WebhookMarker};
+use twilight_model::id::{
+    Id,
+    marker::{GuildMarker, RoleMarker, UserMarker, WebhookMarker},
+};
 use url::Url;
 
 pub struct ErrorWebhook {
@@ -14,8 +17,10 @@ pub struct Config {
     pub db_url: String,
     pub db_connections: u32,
     pub error_webhook: Option<ErrorWebhook>,
-    pub development: bool,
-    pub owner_ids: Vec<u64>,
+    pub owner_ids: Vec<Id<UserMarker>>,
+    pub config_user_ids: Vec<Id<UserMarker>>,
+    pub config_role_ids: Vec<Id<RoleMarker>>,
+    pub guild_id: Id<GuildMarker>,
     pub bot_id: u64,
 }
 
@@ -26,6 +31,16 @@ impl Config {
 
     fn get_required_env(name: &str) -> String {
         Self::get_optional_env(name).unwrap_or_else(|| panic!("{name} not set"))
+    }
+
+    fn parse_ids<T>(name: &str) -> Vec<Id<T>> {
+        Self::get_optional_env(name)
+            .map(|var| {
+                var.split(',')
+                    .map(|item| Id::new(item.trim().parse().expect("invalid Discord ID")))
+                    .collect()
+            })
+            .unwrap_or_default()
     }
 
     fn database_url_from_env() -> String {
@@ -86,15 +101,13 @@ impl Config {
         let token = Self::get_required_env("DISCORD_TOKEN");
         let db_url = Self::database_url_from_env();
         let error_webhook = Self::error_webhook_from_env();
-        let development = env::var("DEVELOPMENT")
-            .unwrap_or_else(|_| "false".to_string())
+        let owner_ids = Self::parse_ids("OWNER_IDS");
+        let config_user_ids = Self::parse_ids("CONFIG_USER_IDS");
+        let config_role_ids = Self::parse_ids("CONFIG_ROLE_IDS");
+        let guild_id = Self::get_required_env("GUILD_ID")
             .parse()
-            .expect("Invalid boolean for DEVELOPMENT.");
-        let owner_ids = Self::get_optional_env("OWNER_IDS").map(|var| {
-            var.split(',')
-                .map(|item| item.trim().parse().expect("invalid owner id"))
-                .collect()
-        });
+            .map(Id::new)
+            .expect("Invalid GUILD_ID");
         let bot_id = Self::get_required_env("BOT_ID")
             .parse()
             .expect("Invalid BOT_ID");
@@ -105,8 +118,10 @@ impl Config {
             db_url,
             db_connections: 10,
             error_webhook,
-            development,
-            owner_ids: owner_ids.unwrap_or_default(),
+            owner_ids,
+            config_user_ids,
+            config_role_ids,
+            guild_id,
             bot_id,
         }
     }

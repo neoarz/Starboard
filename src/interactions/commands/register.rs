@@ -36,8 +36,18 @@ pub async fn post_commands(bot: Arc<StarboardBot>) {
         chat::utils::Utils,
     );
 
-    match inter_client.set_global_commands(&commands).await {
-        Ok(_) => println!("Successfully registered commands"),
+    match inter_client.set_global_commands(&[]).await {
+        Ok(_) => println!("Successfully cleared global commands"),
+        Err(e) => {
+            dbg!(e);
+        }
+    }
+
+    match inter_client
+        .set_guild_commands(bot.config.guild_id, &commands)
+        .await
+    {
+        Ok(_) => println!("Successfully registered guild commands"),
         Err(e) => {
             dbg!(e);
             // eprintln!("Failed to register commands: {e}");

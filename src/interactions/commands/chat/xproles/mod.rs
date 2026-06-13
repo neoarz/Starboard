@@ -4,17 +4,13 @@ mod view;
 
 use twilight_interactions::command::{CommandModel, CreateCommand};
 
-use crate::{
-    errors::StarboardResult,
-    interactions::{commands::permissions::manage_roles, context::CommandCtx},
-};
+use crate::{errors::StarboardResult, interactions::context::CommandCtx};
 
 #[derive(CommandModel, CreateCommand)]
 #[command(
     name = "xproles",
     desc = "View and manage XP-based award roles.",
-    dm_permission = false,
-    default_permissions = "manage_roles"
+    dm_permission = false
 )]
 pub enum XPRoles {
     #[command(name = "setxp")]

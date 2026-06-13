@@ -48,6 +48,9 @@ async fn match_events(
             let Some(guild_id) = event.guild_id else {
                 return Ok(());
             };
+            if guild_id != bot.config.guild_id {
+                return Ok(());
+            }
             let Some(parent_id) = event.parent_id else {
                 return Ok(());
             };
@@ -70,6 +73,10 @@ async fn match_events(
             }
         }
         Event::MessageCreate(event) => {
+            if event.guild_id != Some(bot.config.guild_id) {
+                return Ok(());
+            }
+
             if event.content == format!("<@{}>", bot.config.bot_id) {
                 let _ = bot
                     .http
@@ -112,6 +119,10 @@ async fn match_events(
             .await?;
         }
         Event::MessageUpdate(event) => {
+            if event.guild_id != Some(bot.config.guild_id) {
+                return Ok(());
+            }
+
             crate::owner::handle::handle_message(
                 &bot,
                 event.channel_id,
@@ -125,15 +136,31 @@ async fn match_events(
             core::starboard::link_events::handle_message_update(bot, event).await?;
         }
         Event::ReactionAdd(event) => {
+            if event.guild_id != Some(bot.config.guild_id) {
+                return Ok(());
+            }
+
             core::starboard::reaction_events::handle_reaction_add(bot, event).await?;
         }
         Event::ReactionRemove(event) => {
+            if event.guild_id != Some(bot.config.guild_id) {
+                return Ok(());
+            }
+
             core::starboard::reaction_events::handle_reaction_remove(bot, event).await?;
         }
         Event::MessageDelete(event) => {
+            if event.guild_id != Some(bot.config.guild_id) {
+                return Ok(());
+            }
+
             core::starboard::link_events::handle_message_delete(bot, event.id).await?;
         }
         Event::ThreadDelete(event) => {
+            if event.guild_id != bot.config.guild_id {
+                return Ok(());
+            }
+
             core::starboard::link_events::handle_message_delete(bot, event.id.get().into_id())
                 .await?;
         }

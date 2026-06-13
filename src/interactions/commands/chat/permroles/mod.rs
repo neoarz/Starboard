@@ -6,17 +6,13 @@ pub mod view;
 
 use twilight_interactions::command::{CommandModel, CreateCommand};
 
-use crate::{
-    errors::StarboardResult,
-    interactions::{commands::permissions::manage_channels, context::CommandCtx},
-};
+use crate::{errors::StarboardResult, interactions::context::CommandCtx};
 
 #[derive(CommandModel, CreateCommand)]
 #[command(
     name = "permroles",
     desc = "View and manage PermRoles.",
-    dm_permission = false,
-    default_permissions = "manage_channels"
+    dm_permission = false
 )]
 pub enum PermRoles {
     #[command(name = "view")]

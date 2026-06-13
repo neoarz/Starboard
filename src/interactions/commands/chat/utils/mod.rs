@@ -9,10 +9,7 @@ pub mod unforce;
 
 use twilight_interactions::command::{CommandModel, CreateCommand};
 
-use crate::{
-    errors::StarboardResult,
-    interactions::{commands::permissions::manage_messages, context::CommandCtx},
-};
+use crate::{errors::StarboardResult, interactions::context::CommandCtx};
 
 const INVALID_MESSAGE_ERR: &str = concat!(
     "I couldn't find that message. There are a few possible reasons why:",
@@ -22,12 +19,7 @@ const INVALID_MESSAGE_ERR: &str = concat!(
 );
 
 #[derive(CommandModel, CreateCommand)]
-#[command(
-    name = "utils",
-    desc = "Utility commands.",
-    dm_permission = false,
-    default_permissions = "manage_messages"
-)]
+#[command(name = "utils", desc = "Utility commands.", dm_permission = false)]
 pub enum Utils {
     #[command(name = "info")]
     Info(info::Info),

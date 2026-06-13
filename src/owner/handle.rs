@@ -20,7 +20,7 @@ pub async fn handle_message(
     is_edit: bool,
 ) -> StarboardResult<()> {
     // first check that this is a command being run by the bot owner
-    if !bot.config.owner_ids.contains(&author_id.get()) {
+    if !bot.config.owner_ids.contains(&author_id) {
         return Ok(());
     }
 
